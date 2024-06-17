@@ -1,0 +1,4 @@
+S.Health=10
+S.Strength=2
+S.Defence=0
+S.Luck=0

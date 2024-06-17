@@ -3,11 +3,11 @@ CALL LENGTH Money: !P.Money! $
 SET /A $.MONEY_POS-=STRL/2
 
 SET $.EXP_POS=59
-CALL LENGTH Level: ↑0 (XP: !P.Exp!/0)
+CALL LENGTH Level: ↑!S.Level!  XP: !P.Exp!
 SET /A $.EXP_POS-=STRL/2
 
 SET $.NEXT_POS=59
-CALL LENGTH Next Battle: Unknown (Total Wins: 0)
+CALL LENGTH Next Battle: !M.Name[%P.WorldLvl%]! (Total Wins: !Q.TotalCompletedLevels!)
 SET /A $.NEXT_POS-=STRL/2
 
 ECHO [0m[H[?25l^
@@ -17,9 +17,9 @@ IF "%RAINBOWMODE%"=="TRUE" ( CALL TITLE 2 ) ELSE ( CALL TITLE 1 )&ECHO ^
 .-'--------^|--^|------------'                    .---.-----------.---.                    '------------------------'-.[E^
 |          ^|  ^|             .------------------'    :   [1;34mSTATS[0m   :    '------------------.                           ^|[E^
 |          ^|  ^|             \                       '-----------'                       /        _   ,_,   _        ^|[E^
-|  \_      ^|  ^|      _/     /                                                           \       / `'=^) ^(='` \       ^|[!$.EXP_POS!G%RGB.BLUE%Level[0m:[1m ↑? %RGB.GRAY%([0mXP%RGB.GRAY%: [0m!P.Exp!%RGB.GRAY%/[0m?%RGB.GRAY%^)[0m[E^
+|  \_      ^|  ^|      _/     /                                                           \       / `'=^) ^(='` \       ^|[!$.EXP_POS!G%RGB.BLUE%Level[0m:[1m ↑!S.Level!  [0mXP%RGB.GRAY%: [0m!P.Exp![0m[E^
 |   ]'--___^|__^|___--'[      \                                                           /      /.-.-.\ /.-.-.\      ^|[!$.MONEY_POS!G%RGB.GREEN%Money[0m: [1m!P.Money! %RGB.GREEN%$[0m[E^
-|   ^|       ^|^|       ^|      /                                                           \      `      ^"      `      ^|[!$.NEXT_POS!G%RGB.RED%Next Battle[0m: [1mUnknown %RGB.GRAY%([0mTotal Wins%RGB.GRAY%: [0m?%RGB.GRAY%^)[0m[E^
+|   ^|       ^|^|       ^|      /                                                           \      `      ^"      `      ^|[!$.NEXT_POS!G%RGB.RED%Next Battle[0m: [1m!M.Name[%P.WorldLvl%]:_= ! %RGB.GRAY%([0mTotal Wins%RGB.GRAY%: [0m!Q.TotalCompletedLevels!%RGB.GRAY%^)[0m[E^
 |   \       ^|^|       /      \             .--------------------------------.            /                           ^|[E^
 |    [      ^|^|      ]        '-----------'                                  '----------'                            ^|[E^
 |    ^|______^(^)______^|                                  [1;37mWelcome^^![0m                                                     ^|[E^
@@ -49,7 +49,7 @@ IF "%RAINBOWMODE%"=="TRUE" ( CALL TITLE 2 ) ELSE ( CALL TITLE 1 )&ECHO ^
 |   \_]/_____\                                          \ ^" /                            \_,` ^| \-'  /   ^)`-'       ^|[E^
 |     _\_^| ^|_/_                                          \./                              ___Y  ,    .'7 /^|         ^|[E^
 |    ^(_,_^| ^|_,_^)                                          V                              ^(_,___/...-` ^(_/_/         ^|[E^
-|                                                                                         [1;30m2023©136MasterNR[0m          ^|[3G[1;30mBATTLES OF BATCH [0;33m%VERS% %VERTYPE%[0m[E^
+|                                                                                         [1;30m2023©136MasterNR[0m          ^|[3G[1;30mBATTLES OF BATCH [0;33m%VERFULL% %VERTYPE%[0m[E^
 |     .                              .    .                              .    .                              .      ^|[E^
 |     ^|       ^|       .       ^|      ^|    ^|       ^|       .       ^|      ^|    ^|       ^|       .       ^|      ^|      ^|[E^
 '-----'-------'-------'-------'------'----'-------'-------'-------'------'----'-------'-------'-------'------'------'[A
@@ -57,7 +57,7 @@ SET /P "=[?25h[u"<NUL
 FOR /F "TOKENS=1DELIMS==" %%1 IN ('SET $.') DO SET "%%1="
 
 CALL CHOICE
-IF /I !KEY!==A (
+IF /I !KEY!==E (
 	SET UI=inventory
 )
 

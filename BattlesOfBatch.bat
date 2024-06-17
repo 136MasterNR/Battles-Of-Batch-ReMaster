@@ -128,7 +128,7 @@ IF NOT "%CD%"=="%OCD%" (
 )
 
 :: Check whether the scripts are accessible.
-FOR /F "TOKENS=*" %%I IN ('DIR /S /B /A-D ".\data\scripts"^&DIR /S /B /A-D ".\data\core"') DO IF NOT "%%~nI"=="" (
+FOR /F "TOKENS=*" %%I IN ('DIR /S /B /A-D ".\data\core"') DO IF NOT "%%~nI"=="" (
 	TYPE "%%~dpnxI" >NUL || (
 		CLS
 		ECHO.[X] Access denied:
@@ -166,8 +166,8 @@ SET "PATHEXT=.CMD;.BAT;.EXE;.COM;.VBS;.VBE"
 
 :: Game Version Info ::
 SET VERCODE=0500
-SET VERS=v0.5.00
 SET VERTYPE=DEMO
+SET VERFULL=v!VERCODE:~0,1!.!VERCODE:~1,1!.!VERCODE:~2!
 
 :: Variables Init ::
 SET "DATA=%CD%\data"
@@ -191,9 +191,6 @@ ECHO.[-] Loading display ...[A[G[[38;2;163;255;177m√[0m][B
 
 :: User Interface ::
 :UI
-
-set S.
-pause
 
 PUSHD "!DATA!\screens\!UI!"
 CALL "!DATA!\screens\!UI!\!UI!.cmd"

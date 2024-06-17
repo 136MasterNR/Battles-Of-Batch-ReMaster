@@ -25,6 +25,7 @@ FOR /F "TOKENS=1,*DELIMS=" %%1 IN ('SET !$.SEARCH!') DO (
 )>>"!$.SAVPATH!\!$.NAME!.new"
 
 MOVE /Y "!$.SAVPATH!\!$.NAME!.new" "!$.SAVPATH!\!$.NAME!.sav"
+
 EXIT /B 0
 
 
@@ -34,6 +35,7 @@ SET $.NAME=%1
 FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!$.SAVPATH!\!$.NAME!.sav"') DO (
 	SET %%1
 )
+
 EXIT /B 0
 
 
@@ -42,6 +44,10 @@ SET S.Level=0
 
 FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!RAW!\Levels.txt"') DO (
 	IF !P.Exp! GEQ %%1 SET /A S.Level+=1
+)
+
+FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!RAW!\BaseStats.txt"') DO (
+	SET %%1
 )
 
 EXIT /B 0
@@ -67,6 +73,11 @@ FOR %%I IN (
 	Quests
 ) DO CALL :LOAD %%I
 
+IF NOT DEFINED P.Money SET P.Money=0
+IF NOT DEFINED P.Exp SET P.Exp=0
+IF NOT DEFINED P.WorldLvl SET p.WorldLvl=1
+
 :: Calculate stats for the player, such as level, strength, defence, etc.
 CALL :STATS
+
 EXIT /B 0

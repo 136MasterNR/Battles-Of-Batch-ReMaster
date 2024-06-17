@@ -4,7 +4,8 @@ IF "%1"=="ALL" (
 		Weapons
 		Quests
 		Map
-	) DO CALL :INIT
+	) DO CALL :INIT %%I
+	EXIT /B 0
 )
 
 :INIT
