@@ -16,7 +16,7 @@ IF NOT DEFINED $.SUFFIX SET $.SUFFIX=!$.NAME:~0,1!
 SET $.CATEGORY=
 SET $.CNT=0
 
-FOR /F "TOKENS=1,*DELIMS=]=" %%1 IN ('TYPE "!RAW!\!$.NAME!.ini"') DO (
+FOR /F "USEBACKQ TOKENS=1,*DELIMS=]=" %%1 IN ("!RAW!\!$.NAME!.ini") DO (
 	SET $.VAR=%%1
 	IF "!$.VAR:~0,1!"=="[" (
 		SET $.CATEGORY=!$.VAR:~1!

@@ -65,6 +65,19 @@ IF NOT %1.==READY. IF %1.==LAUNCH. (
 	EXIT /B 0
 )
 
+:: Checks if the directory was altered, this can happen when launched in a zip file.
+IF NOT "%CD%"=="%OCD%" (
+	CLS
+	ECHO.ERR : Altered Directory.
+	ECHO.
+	ECHO.Try the following:
+	ECHO.1. Make sure to extract the game from the zip file.
+	ECHO.2. Bad shortcut options, such as working directory.
+	ECHO.3. Do not launch from shared folders or onedrive.
+	ECHO.4. Do not launch with Administrator Privileges.
+	PAUSE>NUL&EXIT
+)
+
 ::  Start the logger and check if accessible,
 2>".\data\logs.txt" (
 	SET RUNNING=TRUE
@@ -81,63 +94,10 @@ EXIT 1
 
 
 :MAIN
-:: Check if directory files are accessible, such as itself.
-IF NOT EXIST "%~nx0" (
-	CLS
-	ECHO.ERR : Inaccessible Directory.
-	ECHO.
-	ECHO.Try the following:
-	ECHO.1. Do not run the batch file within a zip file or any winrar format.
-	ECHO.2. Make sure that the batch file has permissions to Read/Write in this directory.
-	ECHO.3. Do not launch the batch file directly from a search bar or a run-in.
-	ECHO.4. If you are using a shortcut, make sure you added the correct directory.
-	ECHO.5. Try launching with administrator/elevated permissions.
-	PAUSE>NUL
-	EXIT
-
-:: Check if the game can reach the directory.
-:: This can be a problem if the directory contains characters that batch doesn't understand.
-) ELSE IF NOT EXIST "%CD%" (
-	CLS
-	ECHO.ERR : Unreachable Directory.
-	ECHO.
-	ECHO.Try the following:
-	ECHO.1. Move the game ^(the whole folder^) to a different location.
-	ECHO.2. Make sure the directory's URL name includes ONLY latin characters.
-	ECHO.3. Do not move it to shared folders or onedrive.
-	PAUSE>NUL&EXIT
-)
-
-:: Checks if the directory was altered, this can happen when launched in a zip file.
-IF NOT "%CD%"=="%OCD%" (
-	CLS
-	ECHO.ERR : Altered Directory.
-	ECHO.
-	ECHO.Try the following:
-	ECHO.1. Make sure to extract the game from the zip file.
-	ECHO.2. Bad shortcut options, such as working directory.
-	ECHO.3. Do not launch from shared folders or onedrive.
-	ECHO.4. Do not launch with Administrator Privileges.
-	PAUSE>NUL&EXIT
-)
-
-:: Check whether the scripts are accessible.
-FOR /F "TOKENS=*" %%I IN ('DIR /S /B /A-D ".\data\core"') DO IF NOT "%%~nI"=="" (
-	TYPE "%%~dpnxI" >NUL || (
-		CLS
-		ECHO.[X] Access denied:
-		ECHO."%%~dpnxI"
-		>&2 ECHO.[X] Access denied: "%%~dpnxI"
-		PAUSE
-		EXIT /B 1
-	)
-)
-
-:START
 :: Window Dimensions ::
 MODE CON:COLS=%COLS% LINES=%LINES%
 
-ECHO.[B[-] Initializing ...[A[G[[38;2;163;255;177m√[0m] Preparing ...[B
+ECHO.[B[-] [1mInitializing ...[A[G[[38;2;163;255;177m√[0m] [1mPreparing ...[B
 
 :: System Variables ::
 FOR /F "delims==" %%I IN ('SET ^| FINDSTR /I /V
@@ -178,17 +138,17 @@ SET UI=menu
 :: ANSI Colors Init ::
 FOR /F "TOKENS=*DELIMS=" %%I IN ('TYPE "%RAW%\colors.ans"') DO SET %%I
 
-ECHO.[-] Reading raw data ...[A[G[[38;2;163;255;177m√[0m][B
+ECHO.[-] [1mReading raw data ...[A[G[[38;2;163;255;177m√[0m][B
 
 :: Raw Data Init ::
 CALL INIT ALL
 
-ECHO.[-] Reading player data ...[A[G[[38;2;163;255;177m√[0m][B
+ECHO.[-] [1mReading player data ...[A[G[[38;2;163;255;177m√[0m][B
 
 :: Player Data Init ::
 CALL PLAYER INIT
 
-ECHO.[-] Loading display ...[A[G[[38;2;163;255;177m√[0m][B
+ECHO.[-] [1mLoading display ...[A[G[[38;2;163;255;177m√[0m][B
 
 CALL LICENSE
 
@@ -197,6 +157,7 @@ CALL LICENSE
 SET KEY=NUL
 
 PUSHD "!DATA!\screens\!UI!"
+IF DEFINED #UI (CALL "!DATA!\screens\!UI!\!#UI!.cmd") ELSE ^
 CALL "!DATA!\screens\!UI!\!UI!.cmd"
 POPD
 

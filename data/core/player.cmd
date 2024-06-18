@@ -38,7 +38,7 @@ EXIT /B 0
 :LOAD
 SET $.NAME=%1
 
-FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!$.SAVPATH!\!Config.Profile!\!$.NAME!.sav"') DO (
+FOR /F "USEBACKQ TOKENS=*DELIMS=" %%1 IN ("!$.SAVPATH!\!Config.Profile!\!$.NAME!.sav") DO (
 	SET %%1
 )
 
@@ -67,9 +67,8 @@ FOR %%I IN (
 	Player.sav
 	Items.sav
 	Weapons.sav
+	Equipment.sav
 	Materials.sav
-	EquippedItems.sav
-	EquippedWeapons.sav
 	Quests.sav
 ) DO IF NOT EXIST "!$.SAVPATH!\!Config.Profile!\%%I" BREAK>"!$.SAVPATH!\!Config.Profile!\%%I"
 
@@ -78,20 +77,10 @@ FOR %%I IN (
 	Player
 	Items
 	Weapons
+	Equipment
 	Materials
 	Quests
-) DO FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!$.SAVPATH!\!Config.Profile!\%%I.sav"') DO SET %%1
-
-SET $.CNT=0
-FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!$.SAVPATH!\!Config.Profile!\EquippedItems.sav"') DO (
-	SET /A $.CNT+=1
-	SET E.Item[!$.CNT!]=%%1
-)
-SET $.CNT=0
-FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!$.SAVPATH!\!Config.Profile!\EquippedWeapons.sav"') DO (
-	SET /A $.CNT+=1
-	SET E.Weapon[!$.CNT!]=%%1
-)
+) DO FOR /F "USEBACKQ TOKENS=*DELIMS=" %%1 IN ("!$.SAVPATH!\!Config.Profile!\%%I.sav") DO SET %%1
 
 
 IF NOT DEFINED P.Money SET P.Money=0
