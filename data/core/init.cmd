@@ -1,30 +1,31 @@
 IF "%1"=="ALL" (
-	FOR %%I IN (
-		Items
-		Weapons
-		Quests
-		Map
-	) DO CALL :INIT %%I
+	CALL :INIT Items
+	CALL :INIT Weapons
+	CALL :INIT Quests
+	CALL :INIT Map Map
 	EXIT /B 0
 )
 
+
 :INIT
+SET $.NAME=%1
+SET $.SUFFIX=%2
+
+IF NOT DEFINED $.SUFFIX SET $.SUFFIX=!$.NAME:~0,1!
+
 SET $.CATEGORY=
 SET $.CNT=0
-SET $.NAME=%~n1
 
-FOR /F "TOKENS=1,*DELIMS=]=" %%1 IN ('TYPE "!RAW!\%1.ini"') DO (
+FOR /F "TOKENS=1,*DELIMS=]=" %%1 IN ('TYPE "!RAW!\!$.NAME!.ini"') DO (
 	SET $.VAR=%%1
 	IF "!$.VAR:~0,1!"=="[" (
 		SET $.CATEGORY=!$.VAR:~1!
 		SET /A $.CNT+=1
-		SET ID[!$.NAME:~0,1!]!$.CATEGORY!=!$.CNT!
-		SET !$.NAME:~0,1!.Name[!$.CNT!]=!$.CATEGORY!
+		SET ID[!$.SUFFIX!]!$.CATEGORY!=!$.CNT!
+		SET !$.SUFFIX!.Name[!$.CNT!]=!$.CATEGORY!
 	) ELSE (
-		SET !$.NAME:~0,1!.%%1[!$.CNT!]=%%2
+		SET !$.SUFFIX!.%%1[!$.CNT!]=%%2
 	)
 )
-
-FOR /F "TOKENS=1DELIMS==" %%1 IN ('SET $.') DO SET "%%1="
 
 EXIT /B 0

@@ -1,25 +1,27 @@
 SET $.MONEY_POS=59
-CALL LENGTH Money: !P.Money! $
-SET /A $.MONEY_POS-=STRL/2
+CALL THOUSANDS P.Money
+CALL LENGTH Money: !$.P.Money! $
+SET /A $.MONEY_POS-=$.STRL/2
 
 SET $.EXP_POS=59
-CALL LENGTH Level: ↑!S.Level!  XP: !P.Exp!
-SET /A $.EXP_POS-=STRL/2
+CALL LENGTH Level: ↑!S.Level! ^(!P.Exp!/!S.ReqExp! XP^)
+SET /A $.EXP_POS-=$.STRL/2
 
 SET $.NEXT_POS=59
-CALL LENGTH Next Battle: !M.Name[%P.WorldLvl%]! (Total Wins: !Q.TotalCompletedLevels!)
-SET /A $.NEXT_POS-=STRL/2
+CALL LENGTH Next Battle: !Map.Name[%P.WorldLvl%]!
+SET /A $.NEXT_POS-=$.STRL/2
 
-ECHO [0m[H[?25l^
-.-------------------------------------------------------------------------------------------------------------------.
-IF "%RAINBOWMODE%"=="TRUE" ( CALL TITLE 2 ) ELSE ( CALL TITLE 1 )&ECHO ^
+ECHO.[?25l
+IF "%RAINBOWMODE%"=="TRUE" ( CALL TITLE 2 ) ELSE ( CALL TITLE 1 )
+ECHO [0m[H^
+.-------------------------------------------------------------------------------------------------------------------.[8E^
 '-.--------.--.------------.                                                             .------------------------.-'[E^
 .-'--------^|--^|------------'                    .---.-----------.---.                    '------------------------'-.[E^
 |          ^|  ^|             .------------------'    :   [1;34mSTATS[0m   :    '------------------.                           ^|[E^
 |          ^|  ^|             \                       '-----------'                       /        _   ,_,   _        ^|[E^
-|  \_      ^|  ^|      _/     /                                                           \       / `'=^) ^(='` \       ^|[!$.EXP_POS!G%RGB.BLUE%Level[0m:[1m ↑!S.Level!  [0mXP%RGB.GRAY%: [0m!P.Exp![0m[E^
-|   ]'--___^|__^|___--'[      \                                                           /      /.-.-.\ /.-.-.\      ^|[!$.MONEY_POS!G%RGB.GREEN%Money[0m: [1m!P.Money! %RGB.GREEN%$[0m[E^
-|   ^|       ^|^|       ^|      /                                                           \      `      ^"      `      ^|[!$.NEXT_POS!G%RGB.RED%Next Battle[0m: [1m!M.Name[%P.WorldLvl%]:_= ! %RGB.GRAY%([0mTotal Wins%RGB.GRAY%: [0m!Q.TotalCompletedLevels!%RGB.GRAY%^)[0m[E^
+|  \_      ^|  ^|      _/     /                                                           \       / `'=^) ^(='` \       ^|[!$.EXP_POS!G%RGB.BLUE%Level[0m:[1m ↑!S.Level![0m ^([0m!P.Exp!/!S.ReqExp! XP[0m^)[E^
+|   ]'--___^|__^|___--'[      \                                                           /      /.-.-.\ /.-.-.\      ^|[!$.MONEY_POS!G%RGB.GREEN%Money[0m: [1m!$.P.Money! %RGB.GREEN%$[0m[E^
+|   ^|       ^|^|       ^|      /                                                           \      `      ^"      `      ^|[!$.NEXT_POS!G%RGB.RED%Next Battle[0m: [1m!Map.Name[%P.WorldLvl%]:_= ![0m[E^
 |   \       ^|^|       /      \             .--------------------------------.            /                           ^|[E^
 |    [      ^|^|      ]        '-----------'                                  '----------'                            ^|[E^
 |    ^|______^(^)______^|                                  [1;37mWelcome^^![0m                                                     ^|[E^

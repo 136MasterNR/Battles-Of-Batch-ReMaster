@@ -1,5 +1,11 @@
-SET "$.SAVPATH=%APPDATA%\HTS_DATA\BattlesOfBatch\Wanderer"
-IF NOT EXIST "!SAVPATH!" MD "!SAVPATH!"
+SET "$.SAVPATH=%APPDATA%\HTS_DATA\BattlesOfBatch"
+
+IF NOT DEFINED Config.Profile (
+	SET Config.Profile=Wanderer
+	CALL CONFIG WRITE
+)
+
+IF NOT EXIST "!$.SAVPATH!\!Config.Profile!" MD "!$.SAVPATH!\!Config.Profile!"
 CALL :%*
 
 :: Clear all Temporary Variables
@@ -18,13 +24,13 @@ IF /I !$.NAME!==Materials SET $.SEARCH=M.Owned
 IF /I !$.NAME!==Quests SET $.SEARCH=Q.Progress
 IF /I !$.NAME!==Player SET $.SEARCH=P.
 
-BREAK>"!$.SAVPATH!\weapons.new"
+BREAK>"!$.SAVPATH!\!Config.Profile!\weapons.new"
 
 FOR /F "TOKENS=1,*DELIMS=" %%1 IN ('SET !$.SEARCH!') DO (
 	ECHO;%%1
-)>>"!$.SAVPATH!\!$.NAME!.new"
+)>>"!$.SAVPATH!\!Config.Profile!\!$.NAME!.new"
 
-MOVE /Y "!$.SAVPATH!\!$.NAME!.new" "!$.SAVPATH!\!$.NAME!.sav"
+MOVE /Y "!$.SAVPATH!\!Config.Profile!\!$.NAME!.new" "!$.SAVPATH!\!Config.Profile!\!$.NAME!.sav"
 
 EXIT /B 0
 
@@ -32,7 +38,7 @@ EXIT /B 0
 :LOAD
 SET $.NAME=%1
 
-FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!$.SAVPATH!\!$.NAME!.sav"') DO (
+FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!$.SAVPATH!\!Config.Profile!\!$.NAME!.sav"') DO (
 	SET %%1
 )
 
@@ -41,9 +47,11 @@ EXIT /B 0
 
 :STATS
 SET S.Level=0
+SET S.ReqExp=
 
 FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!RAW!\Levels.txt"') DO (
 	IF !P.Exp! GEQ %%1 SET /A S.Level+=1
+	IF NOT DEFINED S.ReqExp IF !P.Exp! LSS %%1 SET S.ReqExp=%%1
 )
 
 FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!RAW!\BaseStats.txt"') DO (
@@ -60,9 +68,10 @@ FOR %%I IN (
 	Items.sav
 	Weapons.sav
 	Materials.sav
-	Equipped.sav
+	EquippedItems.sav
+	EquippedWeapons.sav
 	Quests.sav
-) DO IF NOT EXIST "!$.SAVPATH!\%%I" BREAK>"!$.SAVPATH!\%%I"
+) DO IF NOT EXIST "!$.SAVPATH!\!Config.Profile!\%%I" BREAK>"!$.SAVPATH!\!Config.Profile!\%%I"
 
 :: Fetch data from each save file
 FOR %%I IN (
@@ -71,11 +80,23 @@ FOR %%I IN (
 	Weapons
 	Materials
 	Quests
-) DO CALL :LOAD %%I
+) DO FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!$.SAVPATH!\!Config.Profile!\%%I.sav"') DO SET %%1
+
+SET $.CNT=0
+FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!$.SAVPATH!\!Config.Profile!\EquippedItems.sav"') DO (
+	SET /A $.CNT+=1
+	SET E.Item[!$.CNT!]=%%1
+)
+SET $.CNT=0
+FOR /F "TOKENS=*DELIMS=" %%1 IN ('TYPE "!$.SAVPATH!\!Config.Profile!\EquippedWeapons.sav"') DO (
+	SET /A $.CNT+=1
+	SET E.Weapon[!$.CNT!]=%%1
+)
+
 
 IF NOT DEFINED P.Money SET P.Money=0
 IF NOT DEFINED P.Exp SET P.Exp=0
-IF NOT DEFINED P.WorldLvl SET p.WorldLvl=1
+IF NOT DEFINED P.WorldLvl SET P.WorldLvl=1
 
 :: Calculate stats for the player, such as level, strength, defence, etc.
 CALL :STATS

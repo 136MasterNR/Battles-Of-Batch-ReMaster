@@ -79,14 +79,8 @@ IF DEFINED RUNNING (
 )
 EXIT 1
 
-:MAIN
-:: Debug
-IF EXIST LET.DEBUG (
-	PUSHD ".\data\cmd"
-	CMD /Q /C ".\debug.cmd" log
-	POPD
-)
 
+:MAIN
 :: Check if directory files are accessible, such as itself.
 IF NOT EXIST "%~nx0" (
 	CLS
@@ -114,7 +108,7 @@ IF NOT EXIST "%~nx0" (
 	PAUSE>NUL&EXIT
 )
 
-:: Checks if the directory was altered, this mostly happens when launched in a zip file.
+:: Checks if the directory was altered, this can happen when launched in a zip file.
 IF NOT "%CD%"=="%OCD%" (
 	CLS
 	ECHO.ERR : Altered Directory.
@@ -158,10 +152,13 @@ FOR /F "delims==" %%I IN ('SET ^| FINDSTR /I /V
 	/C:"COMPUTERNAME"
 	/C:"USERNAME"
 	/C:"SystemDrive"
+	/C:"COLS"
+	/C:"LINES"
+	/C:"WINVER"
 ') DO SET "%%I="
 
 :: Library References ::
-SET "Path=%~dp0data\core;%~dp0data\core\cmd;%SystemRoot%\system32"
+SET "Path=%~dp0data\core;%SystemRoot%\system32"
 SET "PATHEXT=.CMD;.BAT;.EXE;.COM;.VBS;.VBE"
 
 :: Game Version Info ::
@@ -169,9 +166,13 @@ SET VERCODE=0500
 SET VERTYPE=DEMO
 SET VERFULL=v!VERCODE:~0,1!.!VERCODE:~1,1!.!VERCODE:~2!
 
+:: Config Init ::
+CALL CONFIG READ
+
 :: Variables Init ::
 SET "DATA=%CD%\data"
 SET "RAW=!DATA!\raw"
+SET TITLE=Battles of Batch
 SET UI=menu
 
 :: ANSI Colors Init ::
@@ -189,11 +190,19 @@ CALL PLAYER INIT
 
 ECHO.[-] Loading display ...[A[G[[38;2;163;255;177m√[0m][B
 
+CALL LICENSE
+
 :: User Interface ::
 :UI
+SET KEY=NUL
 
 PUSHD "!DATA!\screens\!UI!"
 CALL "!DATA!\screens\!UI!\!UI!.cmd"
 POPD
+
+:: Global Choices ::
+IF /I !KEY!== (
+	CALL Xcmd
+)
 
 GOTO :UI
