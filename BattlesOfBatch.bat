@@ -55,6 +55,7 @@ IF NOT %1.==READY. IF %1.==LAUNCH. (
 	))
 	TASKKILL /F /IM "easyrp.exe" /T
 	TASKKILL /F /FI "WINDOWTITLE eq Now Live Logging - *" /IM "cmd.exe"
+	IF EXIST ".\data\core\cmd\logLogger.txt" DEL /Q ".\data\core\cmd\logLogger.txt"
 	EXIT 0
 ) ELSE (
 	(IF EXIST ".\data\scripts\invisible.vbs" (
@@ -121,7 +122,7 @@ FOR /F "delims==" %%I IN ('SET ^| FINDSTR /I /V
 SET "Path=%~dp0data\core;%SystemRoot%\system32"
 SET "PATHEXT=.CMD;.BAT;.EXE;.COM;.VBS;.VBE"
 
-:: Game Version Info ::
+:: Version Info ::
 SET VERCODE=0500
 SET VERTYPE=DEMO
 SET VERFULL=v!VERCODE:~0,1!.!VERCODE:~1,1!.!VERCODE:~2!

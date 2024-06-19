@@ -60,7 +60,7 @@ GOTO choice
 
 
 :live
-SET "logFile=..\logs\errors.txt"
+SET "logFile=%DATA%\logs.txt"
 
 SET OZ=0
 SET CONN_TRUE=1
@@ -82,19 +82,17 @@ IF NOT EXIST "%logFile%" (
 	PAUSE>NUL&EXIT
 ) 1>NUL 2>NUL >NUL
 
-SET LL=
 COPY "%logFile%" ".\logLogger.txt" >NUL
-FOR /F "usebackq" %%A IN ('%logFile%') DO SET Z=%%~zA
+IF NOT EXIST "%logFile%" ECHO.WHAT
+FOR /F %%A IN (".\logLogger.txt") DO SET Z=%%~zA
 
-IF %OZ%==%Z% GOTO REPEAT
+TIMEOUT /T 1 >NUL
+
+IF %OZ%==%Z% GOTO :REPEAT
 
 SET OZ=%Z%
-TIMEOUT /T 1 >NUL
 CLS
 TYPE .\logLogger.txt
 TITLE Now Live Logging - %logFile%
-ENDLOCAL
-ECHO.
-ECHO.%LL%[1A
 
-GOTO REPEAT
+GOTO :REPEAT
