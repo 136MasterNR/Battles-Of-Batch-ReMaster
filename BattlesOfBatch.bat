@@ -101,27 +101,27 @@ ECHO.[B[-] [1mInitializing ...[A[G[[38;2;163;255;177m√[0m] [1mPreparing
 
 :: System Variables ::
 FOR /F "delims==" %%I IN ('SET ^| FINDSTR /I /V
-	/C:"PROMPT"
-	/C:"PSModulePath"
-	/C:"USERDOMAIN"
-	/C:"SystemRoot"
-	/C:"HOMEPATH"
-	/C:"HOMEDRIVE"
-	/C:"APPDATA"
-	/C:"ComSpec"
-	/C:"COMPUTERNAME"
-	/C:"USERNAME"
-	/C:"SystemDrive"
-	/C:"COLS"
-	/C:"LINES"
-	/C:"WINVER"
+	/C:"PROMPT="
+	/C:"PSModulePath="
+	/C:"USERDOMAIN="
+	/C:"SystemRoot="
+	/C:"HOMEPATH="
+	/C:"HOMEDRIVE="
+	/C:"APPDATA="
+	/C:"ComSpec="
+	/C:"COMPUTERNAME="
+	/C:"USERNAME="
+	/C:"SystemDrive="
+	/C:"COLS="
+	/C:"LINES="
+	/C:"WINVER="
 ') DO SET "%%I="
 
 :: Enable Delayed Expansion ::
 @SETLOCAL ENABLEDELAYEDEXPANSION
 
 :: Library References ::
-SET "Path=%~dp0data\core;%SystemRoot%\system32"
+SET "Path=%~dp0data\core;%SystemRoot%\system32;%SystemRoot%"
 SET "PATHEXT=.CMD;.BAT;.EXE;.COM;.VBS;.VBE"
 
 :: Version Info ::

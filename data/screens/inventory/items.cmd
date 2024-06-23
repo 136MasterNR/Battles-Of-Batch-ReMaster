@@ -34,7 +34,7 @@ FOR /F "TOKENS=3DELIMS=[]=" %%1 IN ('SET E.Weapon') DO (
 	SET $.ITEM=%%1
 	SET $.ID=!ID[W]%%1!
 	CALL LENGTH !$.ITEM:_= ! ╀%%W.Strength[!$.ID!]%%
-	CALL SET $.oBUFFER=!$.oBUFFER![7;79H[1m!$.ITEM![0m %RGB%245;105;105m╀[0m%%W.Strength[!$.ID!]%%
+	CALL SET $.oBUFFER=!$.oBUFFER![7;79H[1m!$.ITEM![0m %RGB%245;105;105m╀[0m[1m%%W.Strength[!$.ID!]%%[0m
 )
 
 IF NOT DEFINED @I.PAGE SET @I.PAGE=1
@@ -74,7 +74,8 @@ FOR /F "TOKENS=2,3DELIMS=[]=" %%1 IN ('SET W.Level') DO (
 		IF !$.CNT! GTR !$.MIN! (
 			SET /A $.WAMOUNT+=1
 			SET $.ITEM=%%1
-			SET $.BUFFER=!$.BUFFER![E[82G%RGB.YELLOW%!$.ITEM:_= ![0m ×[1m%%2[0m
+			SET $.ID=!ID[W]%%1!
+			CALL SET $.BUFFER=!$.BUFFER![E[82G%RGB.YELLOW%!$.ITEM:_= ![0m %RGB.CYAN%↑[0m[1m%%2[0m %RGB%245;105;105m╀[0m[1m%%W.Strength[!$.ID!]%%[0m
 		)
 	)
 )
@@ -84,7 +85,7 @@ SET $.oBUFFER=!$.oBUFFER![45;96H[1m!@W.PAGE!/!$.WPAGES![0m
 
 ECHO;[?25l[H[0m^
 .---.---------------------------------------------------------------------------------------------------------------.[E^
-| %RGB.PINK%[sQ[0m ^|                                                                                                               ^|[E^
+| %RGB.PINK%Q[0m ^|                                                                                                               ^|[E^
 |---'                                         .-----------------------.                                             ^|[E^
 |                                          .--: %RGB%158;177;255mCharacter [0m^& %RGB%133;255;196mEquipment[0m :--.                                          ^|[E^
 |                                       .--'  '-----------------------'  '--.                                       ^|[E^
@@ -133,14 +134,22 @@ ECHO;[?25l[H[0m^
 '-------------------------------------------------------------------------------------------------------------------'[22A^
 !$.oBUFFER!
 ECHO.!$.BUFFER!
-ECHO.!$.BUFFER!
+
+:: Draw Character
+SET $.CNT=0
+FOR /F "DELIMS=" %%I IN (.\character.txt) DO (
+	SET /A $.POS=7+$.CNT
+	ECHO.[!$.POS!;50H%%I
+	SET /A $.CNT+=1
+)
 
 :: Cursor Correction
 IF !@L.SEL! GTR !$.%@L.CAT%AMOUNT! SET /A @L.SEL=!$.%@L.CAT%AMOUNT!
 
 :QUICK-REFRESH
+:: Selection
 SET $.qBUFFER=
-SET $.qBUFFER=!$.qBUFFER![26;6H
+SET $.qBUFFER=!$.qBUFFER![?25l[26;6H
 IF !@L.CAT!==W SET $.qBUFFER=!$.qBUFFER![78G
 SET $.qBUFFER=!$.qBUFFER![!@L.SEL!B[1m^>[0m[1D[1B [1D[2A [1B[33C[1m^<[1D[1B [1D[2A 
 SET $.qBUFFER=!$.qBUFFER![47;12H
@@ -153,22 +162,55 @@ IF !@L.CAT!==I (SET $.qBUFFER=!$.qBUFFER!D) ELSE ^
 IF !@L.CAT!==W (SET $.qBUFFER=!$.qBUFFER!A)
 SET $.qBUFFER=!$.qBUFFER![24m to switch)   [0m
 
-
-ECHO.!$.qBUFFER!
-
-
-SET $.CNT=0
-FOR /F "DELIMS=" %%I IN (.\character.txt) DO (
-	SET /A $.POS=7+$.CNT
-	ECHO.[!$.POS!;50H%%I
-	SET /A $.CNT+=1
+:: Item Info
+SET $.qBUFFER=!$.qBUFFER![26;44H. - - - - - - - - - - - - - - .[27;45H[29X[28;45H[29X[29;45H[29X[30;45H[29X[31;45H[29X[32;45H[29X[33;45H[29X[34;45H[29X[35;45H[29X[36;45H[29X[37;45H[29X[38;45H[29X[39;45H[29X[40;45H[29X[41;45H[29X[42;45H[29X[43;45H[29X[44;45H[29X[45;45H[29X
+SET /A $.CNT=1
+IF !@L.CAT!==I (
+	SET /A "$.REAL_SEL=(@L.SEL+(!@I.PAGE!*17))-17"
+	FOR /F "TOKENS=2,*DELIMS=[]=" %%1 IN ('SET I.Owned') DO (
+		IF !$.CNT! EQU !$.REAL_SEL! (
+			SET $.ITEM=%%1
+			CALL LENGTH : %%1 :
+			SET /A "$.POS=59-($.STRL/2)"
+			SET /A $.ODD=!$.STRL! %% 2
+			IF !$.ODD! EQU 0 SET /A $.POS+=1
+			SET $.qBUFFER=!$.qBUFFER![26;!$.POS!H: %RGB.SKYBLUE%[1m!$.ITEM:_= ![0m :[0m
+			
+			SET $.ID=!ID[I]%%1!
+			IF DEFINED $.ID (
+				CALL SET "$.qBUFFER=!$.qBUFFER![27;46H[s[1m%%I.Desc[!$.ID!]:$;=[u[B[s%%[0m"
+				IF DEFINED I.BaseDamage[!$.ID!] CALL SET "$.qBUFFER=!$.qBUFFER![u[2B[sDamage:[u[B[s[1m%%I.BaseDamage[!$.ID!]%%[0m"
+				IF DEFINED I.BaseHealing[!$.ID!] CALL SET "$.qBUFFER=!$.qBUFFER![u[2B[sHealing:[u[B[s[1m%%I.BaseHealing[!$.ID!]%%[0m"
+				IF DEFINED I.BaseEffect[!$.ID!] CALL SET "$.qBUFFER=!$.qBUFFER![u[2B[sEffects:[u[B[s[1m%%I.BaseEffect[!$.ID!]%%[0m"
+				IF DEFINED I.TargetRange[!$.ID!] CALL SET "$.qBUFFER=!$.qBUFFER![u[2B[sTarget Range: [u[B[s[1m%%I.TargetRange[!$.ID!]%%[0m"
+			) ELSE (
+				SET $.qBUFFER=!$.qBUFFER![27;52H^(Not Recognized^)
+			)
+		)
+		SET /A $.CNT+=1
+	)
+) ELSE IF !@L.CAT!==W (
+	SET /A "$.REAL_SEL=(@L.SEL+(!@W.PAGE!*17))-17"
+	FOR /F "TOKENS=2,*DELIMS=[]=" %%1 IN ('SET W.Level') DO (
+		IF !$.CNT! EQU !$.REAL_SEL! (
+			SET $.ITEM=%%1
+			CALL LENGTH : %%1 :
+			SET /A "$.POS=59-($.STRL/2)"
+			SET /A $.ODD=!$.STRL! %% 2
+			IF !$.ODD! EQU 0 SET /A $.POS+=1
+			SET $.qBUFFER=!$.qBUFFER![26;!$.POS!H: [1m!$.ITEM:_= ! :[0m
+		)
+		SET /A $.CNT+=1
+	)
 )
+
+ECHO;!$.qBUFFER:$P;=%%!
 
 :: Choice ::
 SET $.BUFFER=
 SET $.oBUFFER=
 SET $.qBUFFER=
-SET /P "=[?25h[u"<NUL
+SET /P "=[?25h[2;3H"<NUL
 
 CALL CHOICE
 IF /I !KEY!==Q (
