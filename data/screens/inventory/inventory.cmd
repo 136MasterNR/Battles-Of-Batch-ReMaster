@@ -9,11 +9,20 @@ FOR /F "TOKENS=3DELIMS=[]=" %%1 IN ('SET E.Item') DO (
 	SET $.ITEM=%%1
 	SET $.BUFFER=!$.BUFFER![E[10G!$.CNT!: %RGB.CYAN%!$.ITEM:_= ![0m ×[1m!I.Owned[%%1]![0m
 )
+SET $.MAX=10
+SET $.CNT=0
 SET $.BUFFER=!$.BUFFER![32H
 :: List Owned Items
 FOR /F "TOKENS=2,3DELIMS=[]=" %%1 IN ('SET I.Owned') DO (
-	SET $.ITEM=%%1
-	SET $.BUFFER=!$.BUFFER![E[10G%RGB.CYAN%!$.ITEM:_= ![0m ×[1m%%2[0m
+	SET /A $.CNT+=1
+	IF !$.CNT! LEQ !$.MAX! (
+		SET $.ITEM=%%1
+		SET $.BUFFER=!$.BUFFER![E[10G%RGB.CYAN%!$.ITEM:_= ![0m ×[1m%%2[0m
+	)
+)
+IF !$.CNT! GTR !$.MAX! (
+	SET /A $.CNT-=$.MAX
+	IF !$.CNT! EQU 1 (SET $.BUFFER=!$.BUFFER![E[10G!$.CNT! item hidden...) ELSE SET $.BUFFER=!$.BUFFER![E[10G!$.CNT! items hidden...
 )
 SET $.BUFFER=!$.BUFFER![26H
 :: List Owned Materials
@@ -85,8 +94,8 @@ ECHO.[?25l[H[0m^
 |      :  [1mPress %RGB.CYAN%[4mA[0m[1m to view all Items[0m  :     :                             :     : [1mPress %RGB.CYAN%[4mD[0m[1m to view all Weapons[0m :      ^|[E^
 |      '-----------------------------'     '-----------------------------'     '-----------------------------'      ^|[E^
 |                                                                                                                   ^|[E^
-'-------------------------------------------------------------------------------------------------------------------'[22A^
-!$.BUFFER!
+'-------------------------------------------------------------------------------------------------------------------'[22A
+ECHO.!$.BUFFER!
 
 SET $.CNT=0
 FOR /F "DELIMS=" %%I IN (.\character.txt) DO (
@@ -95,6 +104,7 @@ FOR /F "DELIMS=" %%I IN (.\character.txt) DO (
 	SET /A $.CNT+=1
 )
 
+:: Choice ::
 SET $.BUFFER=
 SET /P "=[?25h[u"<NUL
 
@@ -104,6 +114,13 @@ IF /I !KEY!==Q (
 )
 IF /I !KEY!==A (
 	SET #UI=items
+	IF NOT DEFINED @L.SEL SET @L.SEL=1
+	SET @L.CAT=I
+)
+IF /I !KEY!==D (
+	SET #UI=items
+	IF NOT DEFINED @L.SEL SET @L.SEL=1
+	SET @L.CAT=W
 )
 
 

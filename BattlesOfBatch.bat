@@ -23,7 +23,6 @@
 @ECHO OFF
 @SET COLS=117
 @SET LINES=48
-@SETLOCAL ENABLEDELAYEDEXPANSION
 :: DOS Config ::
 :: :::::::::: ::
 
@@ -118,6 +117,9 @@ FOR /F "delims==" %%I IN ('SET ^| FINDSTR /I /V
 	/C:"WINVER"
 ') DO SET "%%I="
 
+:: Enable Delayed Expansion ::
+@SETLOCAL ENABLEDELAYEDEXPANSION
+
 :: Library References ::
 SET "Path=%~dp0data\core;%SystemRoot%\system32"
 SET "PATHEXT=.CMD;.BAT;.EXE;.COM;.VBS;.VBE"
@@ -133,8 +135,11 @@ CALL CONFIG READ
 :: Variables Init ::
 SET "DATA=%CD%\data"
 SET "RAW=!DATA!\raw"
+SET "TEMP=!TEMP!\bob"
 SET TITLE=Battles of Batch
 SET UI=menu
+
+IF NOT EXIST "!TEMP!" MD "!TEMP!"
 
 :: ANSI Colors Init ::
 FOR /F "TOKENS=*DELIMS=" %%I IN ('TYPE "%RAW%\colors.ans"') DO SET %%I

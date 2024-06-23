@@ -35,5 +35,6 @@ IF "!$.KEY!"==")<�" SET KEY=LESS
 IF "!$.KEY!"==")>�" SET KEY=GREATER
 IF !$.KEY!==)^"� SET KEY=QUOTES
 IF "!$.KEY!"==")%%�" SET KEY=PERCENT
+IF "!$.KEY!"==")|�" SET KEY=PIPE
 
 EXIT /B
