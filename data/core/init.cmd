@@ -1,6 +1,6 @@
 IF "%1"=="ALL" (
-	CALL :INIT Items
-	CALL :INIT Weapons
+	REM CALL :INIT Items
+	REM CALL :INIT Weapons
 	CALL :INIT Quests
 	CALL :INIT Map Map
 	EXIT /B 0

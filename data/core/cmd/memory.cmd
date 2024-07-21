@@ -18,18 +18,22 @@ EXIT /B 0
 
 :GC
 IF /I %1.==CLEAR. (
-	FOR /F "TOKENS=1DELIMS==" %%A IN ('SET TMP ^| FINDSTR /V "Local\Temp"') DO @SET %%A=
-	FOR /F "TOKENS=1DELIMS==" %%A IN ('SET TEMP ^| FINDSTR /V "Local\Temp"') DO @SET %%A=
-	FOR /F "TOKENS=1DELIMS==" %%A IN ('SET VAR.') DO SET %%A=
-	FOR /F "TOKENS=1DELIMS==" %%A IN ('SET CRAFT.UI') DO SET %%A=
-	IF DEFINED ARG SET ARG=
+	FOR /F "TOKENS=1DELIMS==" %%A IN ('SET $.') DO SET %%A=
 	ECHO.Useless variables have been removed.
-	SAVE
+	CALL :SAVE
 ) ELSE (
-	SET TMP | FINDSTR /V "Local\Temp"
-	SET TEMP | FINDSTR /V "Local\Temp"
-	SET VAR.
-	SET CRAFT.UI
+	FOR /F "TOKENS=1,2DELIMS==" %%A IN ('SET $.') DO (
+	ECHO.%%A[0m=%%B[0m <NUL > CON
+)
 	IF DEFINED ARG ECHO.ARG=%ARG%
 )
 EXIT /B 0
+
+:SAVE
+IF DEFINED DUMPED ECHO.[X] Cannot dump twice.&EXIT /B 0
+FOR /F "TOKENS=1DELIMS==" %%A IN ('SET _') DO SET %%A=
+SET \=
+SET > "memory.dmp"
+ECHO.[√] Memory dump finished.
+SET DUMPED=1
+@EXIT /B 0

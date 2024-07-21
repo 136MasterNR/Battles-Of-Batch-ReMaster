@@ -19,7 +19,7 @@ SET $.SEARCH=
 SET W.Level[1]=1
 
 IF /I !$.NAME!==Weapons SET $.SEARCH=W.Level
-IF /I !$.NAME!==Items SET $.SEARCH=I.Owned
+IF /I !$.NAME!==Items SET $.SEARCH=I.Held
 IF /I !$.NAME!==Materials SET $.SEARCH=M.Owned
 IF /I !$.NAME!==Quests SET $.SEARCH=Q.Progress
 IF /I !$.NAME!==Player SET $.SEARCH=P.

@@ -7,19 +7,20 @@ SET $.CNT=0
 FOR /F "TOKENS=3DELIMS=[]=" %%1 IN ('SET E.Item') DO (
 	SET /A $.CNT+=1
 	SET $.ITEM=%%1
-	SET $.BUFFER=!$.BUFFER![E[10G!$.CNT!: %RGB.CYAN%!$.ITEM:_= ![0m ×[1m!I.Owned[%%1]![0m
+	SET $.BUFFER=!$.BUFFER![E[10G!$.CNT!: %RGB.CYAN%!$.ITEM:_= ![0m ×[1m!I.Held[%%1]![0m
 )
 SET $.MAX=10
 SET $.CNT=0
 SET $.BUFFER=!$.BUFFER![32H
 :: List Owned Items
-FOR /F "TOKENS=2,3DELIMS=[]=" %%1 IN ('SET I.Owned') DO (
+FOR /F "TOKENS=2,3DELIMS=[]=" %%1 IN ('SET I.Held') DO (
 	SET /A $.CNT+=1
 	IF !$.CNT! LEQ !$.MAX! (
 		SET $.ITEM=%%1
-		SET $.BUFFER=!$.BUFFER![E[10G%RGB.CYAN%!$.ITEM:_= ![0m ×[1m%%2[0m
+		FOR %%I IN (!$.ITEM!) DO SET $.BUFFER=!$.BUFFER![E[10G%RGB.CYAN%!I.Name[%%I]![0m ×[1m%%2[0m
 	)
 )
+IF !$.CNT! EQU 0 SET $.BUFFER=!$.BUFFER![E[11GYou do not own any items
 IF !$.CNT! GTR !$.MAX! (
 	SET /A $.CNT-=$.MAX
 	IF !$.CNT! EQU 1 (SET $.BUFFER=!$.BUFFER![E[10G!$.CNT! item hidden...) ELSE SET $.BUFFER=!$.BUFFER![E[10G!$.CNT! items hidden...
@@ -39,11 +40,17 @@ FOR /F "TOKENS=1,*DELIMS==" %%1 IN ('SET E.Weapon') DO (
 	CALL SET $.BUFFER=!$.BUFFER![E[82G!$.CNT!: %RGB.YELLOW%!$.ITEM:_= ! %RGB.CYAN%↑[0m[1m!W.Level[%%2]! %RGB%245;105;105m╀[0m[1m%%W.Strength[!ID[W]%%2!]%%[0m
 )
 SET $.BUFFER=!$.BUFFER![29H
+SET $.CNT=0
 :: List Owned Weapons
 FOR /F "TOKENS=2,*DELIMS=[]=" %%1 IN ('SET W.Level') DO (
+	SET /A $.CNT+=1
 	SET $.ITEM=%%1
-	CALL SET $.BUFFER=!$.BUFFER![E[82G%RGB.YELLOW%!$.ITEM:_= ! %RGB.CYAN%↑[0m[1m%%2 %RGB%245;105;105m╀[0m[1m%%W.Strength[!ID[W]%%1!]%%[0m
+	FOR /F "TOKENS=1,2DELIMS= " %%A IN ("!$.ITEM! %%1") DO CALL SET $.BUFFER=!$.BUFFER![E[82G%RGB.YELLOW%!W.Name[%%A]:_= ! %RGB.CYAN%↑[0m[1m%%2 %RGB%245;105;105m╀[0m[1m!W.Strength[%%B]![0m
 )
+IF !$.CNT! EQU 0 SET $.BUFFER=!$.BUFFER![E[82GYou do not own any weapons
+
+
+CALL THOUSANDS P.Money
 
 :: Display ::
 ECHO.[?25l[H[0m^
@@ -57,7 +64,7 @@ ECHO.[?25l[H[0m^
 |                    '------------------:                                   :------------------'                    ^|[E^
 |                                       :                                   :                                       ^|[E^
 |                     .----: %RGB%122;255;126mMoney[0m :----:                                   :--: %RGB.FALSE%Strength[0m :---.                     ^|[E^
-|                     : %RGB%179;255;181m$[0m               :                                   : %RGB.PINK%╀[0m               :                     ^|[27G!P.Money![81G!S.Strength![E^
+|                     : %RGB%179;255;181m$[0m               :                                   : %RGB.PINK%╀[0m               :                     ^|[27G!$.P.Money![81G!S.Strength![E^
 |                     '-----------------:                                   :-----------------'                     ^|[E^
 |                                       :                                   :                                       ^|[E^
 |                     .----: %RGB.BLUE%Level[0m :----:                                   :--: %RGB%255;201;125mCrit Rate[0m :--.                     ^|[E^

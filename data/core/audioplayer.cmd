@@ -6,5 +6,5 @@ ECHO.
 ECHO.
 SET PARAMETERS=%3
 SET PARAMETERS=%PARAMETERS:"=%
-CALL .\binaries\mpg123.exe %PARAMETERS% --no-control --no-visual %2 >NUL
+CALL .\bin\mpg123.exe %PARAMETERS% --no-control --no-visual %2 >NUL
 EXIT 0

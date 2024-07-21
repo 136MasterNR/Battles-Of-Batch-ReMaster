@@ -1,0 +1,5 @@
+FOR /F "TOKENS=1DELIMS==" %%A IN ('SET W.Level') DO SET %%A=
+FOR /F "TOKENS=1DELIMS==" %%A IN ('SET I.Held') DO SET %%A=
+FOR /F "TOKENS=1DELIMS==" %%A IN ('SET E.') DO SET %%A=
+FOR /F "TOKENS=1DELIMS==" %%A IN ('SET M.Owned') DO SET %%A=
+EXIT /B 0

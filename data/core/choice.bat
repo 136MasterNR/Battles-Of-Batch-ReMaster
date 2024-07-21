@@ -1,4 +1,6 @@
-REM : Special thanks to Grub4K for the xcopy input method! (https://gist.github.com/Grub4K/2d3f5875c488164b44454cbf37deae80)
+REM :                                                                                                                        :
+REM : Special thanks to Grub4K for the xcopy input method! (https://gist.github.com/Grub4K/2d3f5875c488164b44454cbf37deae80) :
+REM :                                                                                                                        :
 
 SET "KEY="
 SET "$.KEY="
@@ -10,6 +12,7 @@ IF /I "%1."=="/T." START "CHOICE_AUTO_SKIP" /MIN CMD /C TIMEOUT /T %2^&TASKKILL 
 FOR /F "DELIMS=" %%A IN ('XCOPY /W "!COMSPEC!" "!COMSPEC!" 2^>NUL ^|^| ECHO.TIMEOUT') DO (
 	IF NOT DEFINED $.KEY SET "$.KEY=%%A�"
 )
+FOR /F %%A IN ('COPY /Z "%COMSPEC%" NUL') DO SET "$.CR=%%A"
 
 IF "!$.KEY:~-8,7!."=="TIMEOUT." (
 	::If /T is used and times out, return it
@@ -33,8 +36,13 @@ IF "!$.KEY!"==")&�" SET KEY=AND
 IF "!$.KEY!"==")^�" SET KEY=CARET
 IF "!$.KEY!"==")<�" SET KEY=LESS
 IF "!$.KEY!"==")>�" SET KEY=GREATER
+IF "!$.KEY!"==")(�" SET KEY=OPENING_PARENTHESIS
+IF "!$.KEY!"=="))�" SET KEY=CLOSING_PARENTHESIS
 IF !$.KEY!==)^"� SET KEY=QUOTES
 IF "!$.KEY!"==")%%�" SET KEY=PERCENT
 IF "!$.KEY!"==")|�" SET KEY=PIPE
+IF "!$.KEY!"==")!$.CR!�" SET KEY=ENTER
 
+SET $.KEY=
+SET $.CR=
 EXIT /B
