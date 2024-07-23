@@ -179,7 +179,8 @@ IF !@L.CAT!==I (
 			SET $.qBUFFER=!$.qBUFFER![26;!$.POS!H: %RGB.SKYBLUE%[1m!I.Name[%%1]:_= ![0m :[0m
 			
 			SET $.ID=%%1
-			IF !I.Recognized?[%%1]!.==True. (
+			IF NOT DEFINED I.Recognized?[%%1] SET I.Recognized?[%%1]=False
+			IF /I !I.Recognized?[%%1]!==True (
 				SET "$.qBUFFER=!$.qBUFFER![27;46H[s[1m!I.Desc[%%1]:$;=[u[B[s![0m"
 				FOR /F "TOKENS=2,3,4DELIMS=[]=" %%1 IN ('SET I.Inf[%%1] 2^>NUL') DO (
 					SET $.1=%%2
@@ -203,7 +204,8 @@ IF !@L.CAT!==I (
 			SET $.qBUFFER=!$.qBUFFER![26;!$.POS!H: %RGB.SUNNY%!W.Name[%%1]:_= ! :[0m
 			
 			SET $.ID=%%1
-			IF !W.Recognized?[%%1]!.==True. (
+			IF NOT DEFINED W.Recognized?[%%1] SET W.Recognized?[%%1]=False
+			IF !W.Recognized?[%%1]!==True (
 				SET "$.qBUFFER=!$.qBUFFER![27;46H[s[1m!W.Desc[%%1]:$;=[u[B[s![0m"
 				FOR /F "TOKENS=2,3,4DELIMS=[]=" %%1 IN ('SET W.Inf[%%1] 2^>NUL') DO (
 					SET $.1=%%2

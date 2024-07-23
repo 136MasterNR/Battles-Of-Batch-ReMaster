@@ -14,23 +14,16 @@ EXIT /B 0
 
 
 :SAVE
-SET $.NAME=%1
-SET $.SEARCH=
-SET W.Level[1]=1
+SET $.FILE=%1
+SET $.SEARCH=%2
 
-IF /I !$.NAME!==Weapons SET $.SEARCH=W.Level
-IF /I !$.NAME!==Items SET $.SEARCH=I.Held
-IF /I !$.NAME!==Materials SET $.SEARCH=M.Owned
-IF /I !$.NAME!==Quests SET $.SEARCH=Q.Progress
-IF /I !$.NAME!==Player SET $.SEARCH=P.
+BREAK>"!$.SAVPATH!\!Config.Profile!\!$.FILE!.new"
 
-BREAK>"!$.SAVPATH!\!Config.Profile!\weapons.new"
-
-FOR /F "TOKENS=1,*DELIMS=" %%1 IN ('SET !$.SEARCH!') DO (
+FOR /F "TOKENS=1,*DELIMS=" %%1 IN ('SET !$.SEARCH!.') DO (
 	ECHO;%%1
-)>>"!$.SAVPATH!\!Config.Profile!\!$.NAME!.new"
+)>>"!$.SAVPATH!\!Config.Profile!\!$.FILE!.new"
 
-MOVE /Y "!$.SAVPATH!\!Config.Profile!\!$.NAME!.new" "!$.SAVPATH!\!Config.Profile!\!$.NAME!.sav"
+MOVE /Y "!$.SAVPATH!\!Config.Profile!\!$.FILE!.new" "!$.SAVPATH!\!Config.Profile!\!$.FILE!.sav"
 
 EXIT /B 0
 

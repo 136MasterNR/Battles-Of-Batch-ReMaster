@@ -157,6 +157,7 @@ ECHO.[-] [1mReading player data ...[A[G[[38;2;163;255;177m√[0m][B
 
 :: Player Data Init ::
 CALL PLAYER INIT
+%_INV.GenID:$_Array=W%
 
 ECHO.[-] [1mLoading display ...[A[G[[38;2;163;255;177m√[0m][B
 
@@ -174,6 +175,9 @@ POPD
 :: Global Choices ::
 IF /I !KEY!== (
 	CALL Xcmd
+)
+IF /I !KEY!== (
+	%_SaveAll%
 )
 
 GOTO :UI

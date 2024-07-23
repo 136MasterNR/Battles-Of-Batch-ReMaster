@@ -23,17 +23,18 @@ IF /I %1.==CLEAR. (
 	CALL :SAVE
 ) ELSE (
 	FOR /F "TOKENS=1,2DELIMS==" %%A IN ('SET $.') DO (
-	ECHO.%%A[0m=%%B[0m <NUL > CON
-)
+		ECHO.%%A[0m=%%B[0m <NUL > CON
+	)
 	IF DEFINED ARG ECHO.ARG=%ARG%
 )
 EXIT /B 0
 
 :SAVE
-IF DEFINED DUMPED ECHO.[X] Cannot dump twice.&EXIT /B 0
-FOR /F "TOKENS=1DELIMS==" %%A IN ('SET _') DO SET %%A=
-SET \=
-SET > "memory.dmp"
+( :: Provided by T3RR0R
+  For /f "tokens=1 Delims==" %%G in ('Set ^| findstr /lv "LF"')Do (
+    Set "V=%%G"
+    2> nul 1> nul Set !V! && If not "!V:~0,1!"=="_" Echo(Set "%%G=!%%G!"
+  )
+) >"memory.dmp"
 ECHO.[√] Memory dump finished.
-SET DUMPED=1
 @EXIT /B 0

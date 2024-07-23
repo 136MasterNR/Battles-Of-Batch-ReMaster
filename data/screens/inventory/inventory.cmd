@@ -40,12 +40,19 @@ FOR /F "TOKENS=1,*DELIMS==" %%1 IN ('SET E.Weapon') DO (
 	CALL SET $.BUFFER=!$.BUFFER![E[82G!$.CNT!: %RGB.YELLOW%!$.ITEM:_= ! %RGB.CYAN%↑[0m[1m!W.Level[%%2]! %RGB%245;105;105m╀[0m[1m%%W.Strength[!ID[W]%%2!]%%[0m
 )
 SET $.BUFFER=!$.BUFFER![29H
+SET $.MAX=13
 SET $.CNT=0
 :: List Owned Weapons
 FOR /F "TOKENS=2,*DELIMS=[]=" %%1 IN ('SET W.Level') DO (
 	SET /A $.CNT+=1
-	SET $.ITEM=%%1
-	FOR /F "TOKENS=1,2DELIMS= " %%A IN ("!$.ITEM! %%1") DO CALL SET $.BUFFER=!$.BUFFER![E[82G%RGB.YELLOW%!W.Name[%%A]:_= ! %RGB.CYAN%↑[0m[1m%%2 %RGB%245;105;105m╀[0m[1m!W.Strength[%%B]![0m
+	IF !$.CNT! LEQ !$.MAX! (
+		SET $.ITEM=%%1
+		FOR /F "TOKENS=1,2DELIMS= " %%A IN ("!$.ITEM! %%1") DO CALL SET $.BUFFER=!$.BUFFER![E[82G%RGB.YELLOW%!W.Name[%%A]:_= ! %RGB.CYAN%↑[0m[1m%%2 %RGB%245;105;105m╀[0m[1m!W.Strength[%%B]![0m
+	)
+)
+IF !$.CNT! GTR !$.MAX! (
+	SET /A $.CNT-=$.MAX
+	IF !$.CNT! EQU 1 (SET $.BUFFER=!$.BUFFER![E[82G!$.CNT! item hidden...) ELSE SET $.BUFFER=!$.BUFFER![E[82G!$.CNT! items hidden...
 )
 IF !$.CNT! EQU 0 SET $.BUFFER=!$.BUFFER![E[82GYou do not own any weapons
 
